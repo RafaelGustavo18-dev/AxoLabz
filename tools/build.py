@@ -2,7 +2,7 @@
 """Gera o site estático da AxoLabz (HTML/CSS/JS puros) para o GitHub Pages.
 Uso: python3 tools/build.py   (opcional: OUT=pasta-de-saida)
 Para trocar números, preços, fotos e links edite assets/js/config.js, não este arquivo."""
-import os, math, shutil, re
+import os, shutil, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("OUT") or os.path.dirname(HERE)
@@ -44,14 +44,6 @@ FAVICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect wi
            f'<g {STROKE}>{A_X}</g>' + G_MARK.replace('class="g" pathLength="1" ', '').replace("var(--gill,#17b0bf)", "#5cd6e3") + '</g></svg>')
 
 # ---------- ilustrações ----------
-def star(cx, cy, r):
-    pts = []
-    for i in range(10):
-        a = -math.pi / 2 + i * math.pi / 5
-        rr = r if i % 2 == 0 else r * .45
-        pts.append(f"{cx + rr * math.cos(a):.1f},{cy + rr * math.sin(a):.1f}")
-    return f'<polygon points="{" ".join(pts)}"/>'
-
 def qr_placeholder(x, y, size):
     """A decorative, deliberately non-scannable QR stand-in for the live preview."""
     module = size / 15
@@ -74,29 +66,33 @@ def qr_placeholder(x, y, size):
             f'<g fill="#20262b">{"".join(blocks)}</g></g>')
 
 def plate(size, color):
-    w, h = (124, 168) if size == "M" else (170, 230)
-    s = w / 124
+    # As duas versões seguem a proporção física 64 x 100 mm e 80 x 125 mm.
+    w, h = (128, 200) if size == "M" else (160, 250)
+    s = w / 128
     x, y = (260 - w) / 2, 272 - h
     dark = color == "preta"
     fill, stroke = ("#20262b", "#0f1316") if dark else ("#f7f9fa", "#c3ccd3")
-    fg, acc = ("#ffffff", "#5cd6e3") if dark else ("#1e2429", "#0a8f9c")
+    fg = "#ffffff" if dark else "#1e2429"
     cx = 130
-    stars = "".join(star(cx + (i - 2) * 17 * s, y + h * .27, 7 * s) for i in range(5))
-    ox, cy = cx - 8 * s, y + h * .8
-    arcs = "".join(f'<path d="M{ox + r*.7:.1f} {cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
-    logo_x, logo_y, logo_w, logo_h = cx - 23 * s, y + h * .48, 46 * s, 28 * s
-    qr_size, qr_x, qr_y = 22 * s, x + w - 29 * s, y + h * .77
+    logo_w, logo_h = w * .72, h * .27
+    logo_x, logo_y = cx - logo_w / 2, y + h * .075
+    logo_label_y = logo_y + logo_h * .59
+    qr_size, qr_x, qr_y = w * .36, x + w * .08, y + h * .61
+    nfc_cx, nfc_cy = x + w * .76, qr_y + qr_size / 2
+    nfc_r = qr_size * .51
+    ox = nfc_cx - 8 * s
+    arcs = "".join(f'<path d="M{ox + r*.7:.1f} {nfc_cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {nfc_cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
     return (f'<svg class="plate" viewBox="0 0 260 300" role="img" aria-label="Ilustração da placa {size} {color}">'
             f'<ellipse cx="130" cy="282" rx="{w*.55:.0f}" ry="6" fill="#000" opacity=".12"/>'
             f'<rect x="{x:.1f}" y="{y:.1f}" width="{w}" height="{h}" rx="{14*s:.0f}" fill="{fill}" stroke="{stroke}" stroke-width="2"/>'
-            f'<g fill="{acc}">{stars}</g>'
-            f'<g data-plate-default-copy><text x="{cx}" y="{y + h*.5:.1f}" text-anchor="middle" font-size="{15*s:.1f}" font-weight="700" fill="{fg}">Avalie a gente</text>'
-            f'<text x="{cx}" y="{y + h*.6:.1f}" text-anchor="middle" font-size="{15*s:.1f}" font-weight="700" fill="{fg}">no Google</text></g>'
+            f'<g data-plate-default-copy><rect x="{logo_x:.1f}" y="{logo_y:.1f}" width="{logo_w:.1f}" height="{logo_h:.1f}" rx="{5*s:.1f}" fill="none" stroke="{fg}" stroke-opacity=".28" stroke-width="{1.2*s:.1f}" stroke-dasharray="{3*s:.1f} {3*s:.1f}"/>'
+            f'<text x="{cx}" y="{logo_label_y:.1f}" text-anchor="middle" font-size="{9*s:.1f}" font-weight="700" letter-spacing="{1.1*s:.1f}" fill="{fg}" opacity=".72">SUA LOGO</text></g>'
             f'<image data-plate-logo x="{logo_x:.1f}" y="{logo_y:.1f}" width="{logo_w:.1f}" height="{logo_h:.1f}" preserveAspectRatio="xMidYMid meet" style="display:none"/>'
             f'{qr_placeholder(qr_x, qr_y, qr_size)}'
             f'<rect data-plate-qr-bg x="{qr_x:.1f}" y="{qr_y:.1f}" width="{qr_size:.1f}" height="{qr_size:.1f}" rx="{qr_size*.08:.1f}" fill="#fff" style="display:none"/>'
             f'<image data-plate-qr x="{qr_x:.1f}" y="{qr_y:.1f}" width="{qr_size:.1f}" height="{qr_size:.1f}" preserveAspectRatio="xMidYMid meet" style="display:none"/>'
-            f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}<circle cx="{ox:.1f}" cy="{cy:.1f}" r="{2.4*s:.1f}" fill="{fg}"/></g></svg>')
+            f'<circle cx="{nfc_cx:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
+            f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}<circle cx="{ox:.1f}" cy="{nfc_cy:.1f}" r="{2.4*s:.1f}" fill="{fg}"/></g></svg>')
 
 BROWSER = ('<svg viewBox="0 0 320 220" role="img" aria-label="Ilustração de um site aberto no navegador">'
            '<rect x="2" y="2" width="316" height="216" rx="12" fill="#fff" stroke="#c3ccd3" stroke-width="2"/>'
@@ -309,7 +305,7 @@ def pedido_form():
 <details class="how"><summary>Como copiar o link correto</summary>
 <ol><li>Com o acesso ao Perfil da Empresa no Google, pesquise o nome do seu negócio no Google.</li><li>Toque ou clique em “Pedir avaliações”.</li><li>Copie o link exibido e cole no campo acima.</li></ol>
 <p>Não achou? Fale com a AxoLabz pela <a href="../contato.html">página de contato</a> e peça ajuda para localizar o link.</p></details>
-<div class="field"><div class="opt"><input type="checkbox" id="qr" name="qr" value="sim"><label for="qr">Quero o QR Code adicional (opcional)</label></div>
+<div class="field"><div class="opt"><input type="checkbox" id="qr" name="qr" value="sim" checked><label for="qr">Quero o QR Code adicional (opcional)</label></div>
 <p class="hint">O NFC já está incluso. QR Code adicional: <span id="qr-price">Valor a confirmar</span>.</p><p class="hint">Se personalizou a prévia, envie os arquivos no WhatsApp depois de revisar o pedido.</p></div>
 {f_area("obs", "Observações (opcional)")}
 <button class="btn" type="submit">Revisar solicitação</button>
@@ -366,7 +362,7 @@ def build_pages():
 <p class="fine">Exemplo ilustrativo de site. O valor é uma referência: o orçamento final depende do escopo.</p>
 <div class="actions"><a class="btn" href="digital.html">Conhecer os serviços</a></div></article>
 <article class="duo-col"><div class="duo-head"><h2>AxoLabz 3D</h2>
-<dl class="spec"><dt>Produto</dt><dd>Placa de avaliação do Google</dd><dt>Tamanhos</dt><dd>M e G</dd><dt>Cores</dt><dd>Branca e preta</dd><dt>NFC</dt><dd>Incluso</dd><dt>QR Code</dt><dd>Adicional opcional</dd><dt>Preço M</dt><dd data-price="plate:M">Preço sob consulta</dd><dt>Preço G</dt><dd data-price="plate:G">Preço sob consulta</dd></dl></div>
+<dl class="spec"><dt>Produto</dt><dd>Placa de avaliação do Google</dd><dt>Tamanho M</dt><dd>64 × 100 × 4 mm · 80%</dd><dt>Tamanho G</dt><dd>80 × 125 × 5 mm · 100%</dd><dt>Cores</dt><dd>Branca e preta</dd><dt>NFC</dt><dd>Incluso</dd><dt>QR Code</dt><dd>Opcional</dd><dt>Preço M</dt><dd data-price="plate:M">Preço sob consulta</dd><dt>Preço G</dt><dd data-price="plate:G">Preço sob consulta</dd></dl></div>
 <div class="studio"><div data-photo="G-branca" data-alt="Placa G branca">{plate("G", "branca")}</div><p class="fine" data-illus style="margin:0">Imagem ilustrativa da placa G branca</p></div>
 <p class="fine">Fabricação sob encomenda. O prazo é confirmado pelo WhatsApp.</p>
 <div class="actions"><a class="btn" href="3d.html">Ver o catálogo</a></div></article>
@@ -427,7 +423,7 @@ def build_pages():
          f'''<section class="three-intro" aria-labelledby="three-title"><div class="wrap">
 <p class="three-eyebrow"><span aria-hidden="true"></span> AXOLABZ 3D <i>·</i> FEITA SOB ENCOMENDA</p>
 <h1 id="three-title">Uma avaliação começa com <em>um toque.</em></h1>
-<p>Configure o tamanho e a cor da sua placa. O NFC já vem incluso e leva seu cliente direto ao link de avaliação.</p>
+<p>Escolha o tamanho e a cor, envie a logo do seu negócio e veja a prévia. O QR Code é opcional; o NFC já vem incluso.</p>
 <a class="btn" href="#simulador">Personalizar minha placa <span aria-hidden="true">↓</span></a>
 </div></section>
 <section class="three-config-section" id="simulador" aria-labelledby="simulator-title"><div class="wrap">
@@ -441,8 +437,8 @@ def build_pages():
 </figure>
 <div class="three-option-panel">
 <div><p class="three-kicker">1 · TAMANHO</p><div class="three-size-options" role="group" aria-label="Escolha o tamanho da placa">
-<button class="three-size-option" type="button" data-plate-size="M" aria-pressed="false"><span class="three-size-name">M</span><span class="three-size-description">Compacta</span><strong data-price="plate:M">Preço sob consulta</strong></button>
-<button class="three-size-option" type="button" data-plate-size="G" aria-pressed="true"><span class="three-size-name">G</span><span class="three-size-description">Maior destaque</span><strong data-price="plate:G">Preço sob consulta</strong></button>
+<button class="three-size-option" type="button" data-plate-size="M" aria-pressed="false"><span class="three-size-name">M</span><span class="three-size-description">64 × 100 × 4 mm · 80%</span><strong data-price="plate:M">Preço sob consulta</strong></button>
+<button class="three-size-option" type="button" data-plate-size="G" aria-pressed="true"><span class="three-size-name">G</span><span class="three-size-description">80 × 125 × 5 mm · 100%</span><strong data-price="plate:G">Preço sob consulta</strong></button>
 </div></div>
 <div><p class="three-kicker">2 · COR</p><div class="three-color-options" role="group" aria-label="Escolha a cor da placa">
 <button class="three-color-option" type="button" data-plate-color="branca" aria-label="Branca" aria-pressed="false"><i class="three-swatch white" aria-hidden="true"></i>Branca</button>
@@ -450,11 +446,11 @@ def build_pages():
 </div></div>
 <div class="three-customization" aria-labelledby="customization-title"><p class="three-kicker" id="customization-title">3 · PERSONALIZAÇÃO</p>
 <div class="three-custom-grid">
-<div class="three-upload-control"><label class="three-upload-label" for="custom-logo">Logo personalizada</label><input id="custom-logo" class="three-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-custom-file="logo"><small data-custom-name="logo">PNG, JPG, WEBP ou SVG · até 5 MB</small><button class="three-file-clear" type="button" data-clear-custom="logo" hidden>Remover logo</button></div>
-<div class="three-upload-control"><label class="three-upload-label" for="custom-qr">Imagem do QR Code</label><input id="custom-qr" class="three-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-custom-file="qr"><small data-custom-name="qr">PNG, JPG, WEBP ou SVG · até 5 MB</small><button class="three-file-clear" type="button" data-clear-custom="qr" hidden>Remover QR</button></div>
+<div class="three-upload-control"><label class="three-upload-label" for="custom-logo">Logo do seu negócio</label><input id="custom-logo" class="three-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-custom-file="logo"><small data-custom-name="logo">Escolha a imagem da logo · PNG, JPG, WEBP ou SVG · até 5 MB</small><button class="three-file-clear" type="button" data-clear-custom="logo" hidden>Remover logo</button></div>
+<div class="three-upload-control"><label class="three-upload-label" for="custom-qr">Imagem do QR Code (opcional)</label><input id="custom-qr" class="three-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-custom-file="qr"><small data-custom-name="qr">Se quiser o QR, escolha a imagem · até 5 MB</small><button class="three-file-clear" type="button" data-clear-custom="qr" hidden>Remover QR</button></div>
 </div>
-<label class="three-qr-toggle"><input type="checkbox" data-preview-qr-toggle><span><strong>Adicionar QR Code à placa</strong><small>Sem imagem enviada, a prévia mostra um QR ilustrativo, não escaneável.</small></span></label>
-<p class="three-custom-note">A prévia usa os arquivos localmente no navegador. Para fabricar a placa, envie as imagens pelo WhatsApp após revisar o pedido.</p>
+<label class="three-qr-toggle"><input type="checkbox" data-preview-qr-toggle checked><span><strong>Incluir QR Code (opcional)</strong><small>Sem imagem enviada, a prévia mostra um QR ilustrativo, não escaneável.</small></span></label>
+<p class="three-custom-note">Os arquivos aparecem apenas na prévia deste navegador. Envie a logo e, se quiser, o QR pelo WhatsApp após revisar o pedido.</p>
 <p class="three-custom-status" data-custom-status role="status" aria-live="polite"></p></div>
 <div class="three-included"><span class="three-nfc-icon" aria-hidden="true">)))</span><span><strong>NFC incluso</strong><small>O QR Code é opcional.</small></span></div>
 <a class="btn three-order-button" data-order-variant href="produtos/placa-avaliacao-google.html?v=G-preta#pedido">Pedir esta placa <span aria-hidden="true">↗</span></a>
