@@ -62,7 +62,7 @@ def qr_placeholder(x, y, size):
                 on = (row * 7 + col * 11 + row * col * 3) % 5 in (0, 1)
             if on:
                 blocks.append(f'<rect x="{x + col * module:.2f}" y="{y + row * module:.2f}" width="{module:.2f}" height="{module:.2f}"/>')
-    return (f'<g data-plate-qr-placeholder style="display:none"><rect x="{x:.1f}" y="{y:.1f}" width="{size:.1f}" height="{size:.1f}" rx="{size*.08:.1f}" fill="#fff"/>'
+    return (f'<g data-plate-qr-placeholder><rect x="{x:.1f}" y="{y:.1f}" width="{size:.1f}" height="{size:.1f}" rx="{size*.08:.1f}" fill="#fff"/>'
             f'<g fill="#20262b">{"".join(blocks)}</g></g>')
 
 def plate(size, color):
@@ -78,10 +78,14 @@ def plate(size, color):
     logo_x, logo_y = cx - logo_w / 2, y + h * .075
     logo_label_y = logo_y + logo_h * .59
     qr_size, qr_x, qr_y = w * .36, x + w * .08, y + h * .61
-    nfc_cx, nfc_cy = x + w * .76, qr_y + qr_size / 2
+    nfc_cy = qr_y + qr_size / 2
     nfc_r = qr_size * .51
-    ox = nfc_cx - 8 * s
-    arcs = "".join(f'<path d="M{ox + r*.7:.1f} {nfc_cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {nfc_cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
+    def nfc_icon(center_x, position, hidden=False):
+        ox = center_x - 8 * s
+        arcs = "".join(f'<path d="M{ox + r*.7:.1f} {nfc_cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {nfc_cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
+        style = ' style="display:none"' if hidden else ""
+        return (f'<g data-plate-nfc-{position}{style}><circle cx="{center_x:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
+                f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}<circle cx="{ox:.1f}" cy="{nfc_cy:.1f}" r="{2.4*s:.1f}" fill="{fg}"/></g></g>')
     return (f'<svg class="plate" viewBox="0 0 260 300" role="img" aria-label="Ilustração da placa {size} {color}">'
             f'<ellipse cx="130" cy="282" rx="{w*.55:.0f}" ry="6" fill="#000" opacity=".12"/>'
             f'<rect x="{x:.1f}" y="{y:.1f}" width="{w}" height="{h}" rx="{14*s:.0f}" fill="{fill}" stroke="{stroke}" stroke-width="2"/>'
@@ -91,8 +95,7 @@ def plate(size, color):
             f'{qr_placeholder(qr_x, qr_y, qr_size)}'
             f'<rect data-plate-qr-bg x="{qr_x:.1f}" y="{qr_y:.1f}" width="{qr_size:.1f}" height="{qr_size:.1f}" rx="{qr_size*.08:.1f}" fill="#fff" style="display:none"/>'
             f'<image data-plate-qr x="{qr_x:.1f}" y="{qr_y:.1f}" width="{qr_size:.1f}" height="{qr_size:.1f}" preserveAspectRatio="xMidYMid meet" style="display:none"/>'
-            f'<circle cx="{nfc_cx:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
-            f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}<circle cx="{ox:.1f}" cy="{nfc_cy:.1f}" r="{2.4*s:.1f}" fill="{fg}"/></g></svg>')
+            f'{nfc_icon(x + w * .76, "right")}{nfc_icon(cx, "center", hidden=True)}</svg>')
 
 BROWSER = ('<svg viewBox="0 0 320 220" role="img" aria-label="Ilustração de um site aberto no navegador">'
            '<rect x="2" y="2" width="316" height="216" rx="12" fill="#fff" stroke="#c3ccd3" stroke-width="2"/>'
