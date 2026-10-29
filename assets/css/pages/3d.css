@@ -32,7 +32,7 @@
 .three-option-panel{display:flex;flex-direction:column;justify-content:center;gap:1.15rem;padding:clamp(1.35rem,3vw,2.2rem);background:#fff}
 .three-option-panel .three-kicker{margin-bottom:.5rem;font-size:.75rem}
 .three-size-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
-.three-size-option{display:grid;gap:.15rem;min-width:0;min-height:112px;padding:.85rem .9rem;border:1px solid #d6dfe2;border-radius:12px;background:#f8f9f9;color:#20262b;text-align:left;font:inherit;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
+.three-size-option{display:grid;gap:.15rem;min-width:0;min-height:124px;padding:.85rem .9rem;border:1px solid #d6dfe2;border-radius:12px;background:#f8f9f9;color:#20262b;text-align:left;font:inherit;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
 .three-size-option:hover{transform:translateY(-2px);border-color:#94bfc1;background:#fff}
 .three-size-option[aria-pressed=true]{border-color:#087d88;background:#eef7f6;box-shadow:inset 0 0 0 1px #087d88}
 .three-size-name{font-family:var(--head);font-size:1.45rem;font-weight:800;line-height:1.15}
@@ -72,3 +72,45 @@
 @media(max-width:740px){.three-config-heading{display:block}.three-config-heading>p{margin-top:.45rem}.three-configurator{grid-template-columns:1fr}.three-preview{min-height:420px}.three-preview-variant svg,.three-preview-variant img{height:340px}.three-option-panel{gap:1rem}}
 @media(max-width:480px){.three-custom-grid{grid-template-columns:1fr}.three-intro{padding-block:2.7rem}.three-intro h1{font-size:clamp(2.7rem,12vw,3.65rem)}.three-config-section{padding-block:2.4rem}.three-preview{min-height:360px}.three-preview-variant svg,.three-preview-variant img{height:290px}.three-preview-label{top:.85rem;left:.85rem}.three-selected-chip{bottom:.85rem;left:.85rem}.three-option-panel{padding:1rem}.three-size-options,.three-color-options{gap:.5rem}.three-size-option{padding:.7rem;min-height:104px}.three-size-option strong{font-size:.75rem}}
 @media(prefers-reduced-motion:reduce){.three-preview-orbit,.three-preview-variant.is-active{animation:none!important}.three-size-option,.three-color-option{transition:none!important}}
+
+/* Ajustes para manter a prévia e os controles confortáveis em telas pequenas. */
+@media(max-width:740px){
+ .three-configurator{grid-template-columns:minmax(0,1fr)}
+ .three-preview,.three-option-panel{min-width:0}
+ .three-preview{min-height:clamp(340px,88vw,420px)}
+ .three-preview-variant svg,.three-preview-variant img{height:clamp(290px,74vw,340px);max-width:82%}
+}
+@media(max-width:480px){
+ .three-intro{padding-block:2.3rem}
+ .three-intro h1{font-size:clamp(2.3rem,10.5vw,3rem)}
+ .three-intro .btn{width:100%}
+ .three-config-section{padding-block:2rem}
+ .three-config-heading h2{font-size:clamp(1.65rem,7.5vw,2.1rem)}
+ .three-configurator{border-radius:14px}
+ .three-preview{min-height:clamp(310px,92vw,350px)}
+ .three-preview-variant svg,.three-preview-variant img{height:clamp(230px,72vw,270px);max-width:84%}
+ .three-preview-label{top:.65rem;left:.65rem;max-width:calc(100% - 1.3rem);padding:.45rem .6rem;font-size:.75rem}
+ .three-selected-chip{bottom:.65rem;left:.65rem;padding:.5rem .65rem;font-size:.88rem}
+ .three-option-panel{gap:.9rem;padding:.85rem}
+ .three-size-options,.three-color-options{gap:.45rem}
+ .three-size-option{min-height:128px;padding:.65rem;gap:.12rem}
+ .three-size-description{font-size:.75rem;line-height:1.3;overflow-wrap:anywhere}
+ .three-size-option strong{font-size:.75rem;line-height:1.25}
+ .three-color-option{min-width:0;min-height:46px;justify-content:center;gap:.35rem;padding:.5rem .4rem;font-size:.8rem}
+ .three-customization{gap:.55rem;padding:.75rem}
+ .three-custom-grid{gap:.5rem}
+ .three-upload-control{padding:.6rem}
+ .three-file-input{font-size:.75rem}
+ .three-qr-toggle small,.three-custom-note{font-size:.75rem}
+ .three-qr-toggle{padding:.6rem}
+ .three-qr-toggle input{width:20px;height:20px}
+ .three-order-button{min-height:48px}
+ .three-order-note{font-size:.75rem;line-height:1.4}
+}
+@media(max-width:360px){
+ .three-option-panel{padding:.7rem}
+ .three-size-options{grid-template-columns:1fr}
+ .three-size-option{min-height:0;padding:.65rem}
+ .three-size-description,.three-size-option strong,.three-color-option{font-size:.75rem}
+ .three-preview-variant svg,.three-preview-variant img{height:230px}
+}
