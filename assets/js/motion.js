@@ -24,14 +24,14 @@
       var key = size + "-" + color;
       var href = "produtos/placa-avaliacao-google.html?v=" + encodeURIComponent(key);
       if (custom.logo) href += "&customLogo=1";
-      if (qrToggle) href += "&customQr=" + (qrToggle.checked ? "1" : "0");
+      href += "&customQr=" + ((qrToggle ? qrToggle.checked : true) ? "1" : "0");
       orderLink.href = href + "#pedido";
       orderLink.setAttribute("aria-label", "Pedir placa " + size + " " + (color === "preta" ? "preta" : "branca"));
     }
 
     function updateCustomPreview() {
       var hasLogo = !!custom.logo;
-      var showQr = !!(qrToggle && qrToggle.checked);
+      var showQr = qrToggle ? qrToggle.checked : true;
       viewer.querySelectorAll("[data-plate-default-copy]").forEach(function (el) { el.style.display = hasLogo ? "none" : ""; });
       viewer.querySelectorAll("[data-plate-logo]").forEach(function (el) {
         if (custom.logo) el.setAttribute("href", custom.logo);
@@ -45,6 +45,8 @@
         else el.removeAttribute("href");
         el.style.display = showQr && !!custom.qr ? "inline" : "none";
       });
+      viewer.querySelectorAll("[data-plate-nfc-right]").forEach(function (el) { el.style.display = showQr ? "" : "none"; });
+      viewer.querySelectorAll("[data-plate-nfc-center]").forEach(function (el) { el.style.display = showQr ? "none" : ""; });
       updateOrderLink();
     }
 
