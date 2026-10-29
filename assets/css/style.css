@@ -217,7 +217,7 @@ details.how summary{cursor:pointer;font-weight:700;min-height:32px}
 .tap{position:relative;min-height:clamp(320px,40vw,420px);display:grid;place-items:center;background:var(--studio);overflow:hidden}
 .tap-plate{position:relative;width:min(250px,58%);margin-left:-16%}
 .tap-plate svg{width:100%;height:auto}
-.rip{position:absolute;left:45.8%;top:75.3%;width:44px;height:44px;margin:-22px 0 0 -22px;border:2px solid var(--cyan);border-radius:50%;opacity:0}
+.rip{position:absolute;left:66%;top:68%;width:44px;height:44px;margin:-22px 0 0 -22px;border:2px solid var(--cyan);border-radius:50%;opacity:0}
 .tap-phone{position:absolute;right:12%;bottom:8%;width:112px;height:216px;border-radius:22px;background:#0e1215;padding:7px;box-shadow:0 18px 30px rgba(0,0,0,.25);rotate:-3deg;transform:translate(-104px,-26px)}
 .scr{height:100%;border-radius:16px;background:#fff;padding:14px 8px;display:flex;flex-direction:column;gap:10px;align-items:center}
 .scr b{width:34px;height:6px;border-radius:3px;background:#d5dce2}
@@ -553,3 +553,38 @@ details.how{border-color:#d0d9dd;border-radius:9px;background:#f7f8f8;color:#202
  .tap-phone{left:41%;top:68.5%;width:104px;height:200px}
 }
 @media(prefers-reduced-motion:reduce){.tapsec.play .tap-phone{animation:none!important}}
+
+/* Ajustes de leitura e toque em celulares estreitos. */
+@media(max-width:480px){
+ .wrap{width:min(var(--max),100% - 1.25rem)}
+ .hero-x{padding-top:4.5rem}
+ .hero-layout{width:min(100% - 1.25rem,var(--max));gap:.85rem}
+ .hero-copy h1{font-size:clamp(2.3rem,10.5vw,3rem)}
+ .hero-signals{line-height:1.4}
+ .product-stage{min-height:330px}
+ .plate-option svg,.plate-option img{height:clamp(225px,68vw,255px);max-width:90%}
+ .product-chip{padding:.45rem .55rem;font-size:.75rem}
+ .chip-new,.chip-nfc{top:4%}
+ .chip-new{left:4%}
+ .chip-nfc{right:4%}
+ .chip-variant{left:4%;bottom:4%}
+ .variant-controls{padding:.7rem;gap:.5rem}
+ .variant-controls .control-set{flex-wrap:wrap;gap:.35rem}
+ .variant-controls .control-set>span{min-width:3.25rem}
+ .variant-controls .color-set{justify-content:space-between}
+ .variant-controls .color-set .color-choice{flex:1;justify-content:center;padding-inline:.4rem}
+ .variant-order{margin-top:.5rem}
+ .spec{grid-template-columns:minmax(4.5rem,auto) minmax(0,1fr);gap:.2rem .8rem}
+ .tap{min-height:320px}
+ .tap-plate{width:min(230px,68%)}
+ .tap-phone{left:43%;top:68%;width:96px;height:184px}
+ .wa-float{right:max(.7rem,env(safe-area-inset-right));bottom:max(.7rem,env(safe-area-inset-bottom));min-height:46px;padding:.55rem .8rem;font-size:.88rem}
+}
+@media(max-width:360px){
+ .wrap,.hero-layout{width:min(var(--max),100% - 1rem)}
+ .product-stage{min-height:310px}
+ .plate-option svg,.plate-option img{height:220px}
+ .product-chip{padding:.4rem .48rem;font-size:.75rem}
+ .variant-controls{padding:.6rem}
+ .variant-controls .control-set button{padding-inline:.5rem}
+}
