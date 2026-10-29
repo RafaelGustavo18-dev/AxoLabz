@@ -85,7 +85,7 @@ def plate(size, color):
         arcs = "".join(f'<path d="M{ox + r*.7:.1f} {nfc_cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {nfc_cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
         style = ' style="display:none"' if hidden else ""
         return (f'<g data-plate-nfc-{position}{style}><circle cx="{center_x:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
-                f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}<circle cx="{ox:.1f}" cy="{nfc_cy:.1f}" r="{2.4*s:.1f}" fill="{fg}"/></g></g>')
+                f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}</g></g>')
     return (f'<svg class="plate" viewBox="0 0 260 300" role="img" aria-label="Ilustração da placa {size} {color}">'
             f'<ellipse cx="130" cy="282" rx="{w*.55:.0f}" ry="6" fill="#000" opacity=".12"/>'
             f'<rect x="{x:.1f}" y="{y:.1f}" width="{w}" height="{h}" rx="{14*s:.0f}" fill="{fill}" stroke="{stroke}" stroke-width="2"/>'
