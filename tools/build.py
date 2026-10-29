@@ -82,7 +82,7 @@ def plate(size, color):
     nfc_r = qr_size * .51
     def nfc_icon(center_x, position, hidden=False):
         ox = center_x - 8 * s
-        arcs = "".join(f'<path d="M{ox + r*.7:.1f} {nfc_cy - r*.7:.1f} A{r:.1f} {r:.1f} 0 0 1 {ox + r*.7:.1f} {nfc_cy + r*.7:.1f}"/>' for r in (6 * s, 11 * s, 16 * s))
+        arcs = "".join(f'<path d="M{ox:.1f} {nfc_cy - ry:.1f} A{rx:.1f} {ry:.1f} 0 0 1 {ox:.1f} {nfc_cy + ry:.1f}"/>' for rx, ry in ((6 * s, 4.5 * s), (11 * s, 8 * s), (16 * s, 11.5 * s)))
         style = ' style="display:none"' if hidden else ""
         return (f'<g data-plate-nfc-{position}{style}><circle cx="{center_x:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
                 f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}</g></g>')
