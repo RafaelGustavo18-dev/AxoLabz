@@ -81,8 +81,15 @@ def plate(size, color):
     nfc_cy = qr_y + qr_size / 2
     nfc_r = qr_size * .51
     def nfc_icon(center_x, position, hidden=False):
-        ox = center_x - 8 * s
-        arcs = "".join(f'<path d="M{ox:.1f} {nfc_cy - ry:.1f} A{rx:.1f} {ry:.1f} 0 0 1 {ox:.1f} {nfc_cy + ry:.1f}"/>' for rx, ry in ((6 * s, 4.5 * s), (11 * s, 8 * s), (16 * s, 11.5 * s)))
+        unit = nfc_r / 48
+        waves = ((-21.5, -13, -13.5, -8), (-10.5, -18, -2.5, -11), (.5, -24, 9.5, -14), (11.5, -29, 22.5, -16))
+        arcs = "".join(
+            f'<path d="M{center_x + (x0 + .9)*unit:.1f} {nfc_cy + y0*unit:.1f} '
+            f'C{center_x + (c1x + .9)*unit:.1f} {nfc_cy + c1y*unit:.1f} '
+            f'{center_x + (c1x + .9)*unit:.1f} {nfc_cy - c1y*unit:.1f} '
+            f'{center_x + (x0 + .9)*unit:.1f} {nfc_cy - y0*unit:.1f}"/>'
+            for x0, y0, c1x, c1y in waves
+        )
         style = ' style="display:none"' if hidden else ""
         return (f'<g data-plate-nfc-{position}{style}><circle cx="{center_x:.1f}" cy="{nfc_cy:.1f}" r="{nfc_r:.1f}" fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}"/>'
                 f'<g fill="none" stroke="{fg}" stroke-width="{2.2*s:.1f}" stroke-linecap="round">{arcs}</g></g>')
