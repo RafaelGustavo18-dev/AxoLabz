@@ -24,7 +24,7 @@
       var key = size + "-" + color;
       var href = "produtos/placa-avaliacao-google.html?v=" + encodeURIComponent(key);
       if (custom.logo) href += "&customLogo=1";
-      if (qrToggle && qrToggle.checked) href += "&customQr=1";
+      if (qrToggle) href += "&customQr=" + (qrToggle.checked ? "1" : "0");
       orderLink.href = href + "#pedido";
       orderLink.setAttribute("aria-label", "Pedir placa " + size + " " + (color === "preta" ? "preta" : "branca"));
     }

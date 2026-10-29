@@ -230,8 +230,11 @@
       }
       var notes = [];
       if (params.get("customLogo") === "1") notes.push("Quero incluir meu logo personalizado; vou enviar o arquivo pelo WhatsApp.");
+      if (params.has("customQr")) {
+        var wantsQr = params.get("customQr") === "1";
+        if (f.elements.qr) f.elements.qr.checked = wantsQr;
+      }
       if (params.get("customQr") === "1") {
-        if (f.elements.qr) f.elements.qr.checked = true;
         notes.push("Quero incluir QR Code na placa; vou enviar a imagem pelo WhatsApp se já tiver uma.");
       }
       if (notes.length && f.elements.obs && !f.elements.obs.value.trim()) f.elements.obs.value = notes.join(" ");
